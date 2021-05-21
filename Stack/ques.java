@@ -3,7 +3,8 @@ import java.util.*;
 public class ques {
 
     public static void main(String[] args) {
-        que();
+        // que();
+        eval();
     }
 
     public static void que() {
@@ -237,11 +238,11 @@ public class ques {
     }
 
     // leetcode 239 -> sliding window max
-    public int[] maxSlidingWindow(int[] nums, int k) {
-        int n = nums.length;
-        int[] ans = new int[n - k + 1];
+    // public int[] maxSlidingWindow(int[] nums, int k) {
+    // int n = nums.length;
+    // int[] ans = new int[n - k + 1];
 
-    }
+    // }
 
     // leetcode 503 -> next greater element 2
     public int[] nextGreaterElements(int[] arr) {
@@ -261,5 +262,292 @@ public class ques {
             ans[st.pop()] = -1;
         }
         return ans;
-    } 
+    }
+
+    // =========================================================================================================================
+    public static void eval() {
+        String s = "(7 - (4 + 2 * 3)+6/2)+9*2";
+        String str = "a*(b-c+d)/e";
+        System.out.println(infixToPrefix(s));
+        // String postfix = infixToPostfix(s);
+        // System.out.println(postfix);
+        // System.out.println(postfixEvaluation(postfix));
+        // System.out.println(postfixToInfix(postfix));
+        // System.out.println(postfixToPrefix(postfix));
+        // String prefix = infixToPrefix(s);
+        // System.out.println(prefix);
+        // System.out.println(prefixEvaluation(prefix));
+        // System.out.println(prefixToPostfix(prefix));
+        // System.out.println(prefixToInfix(prefix));
+    }
+    // infix - postfix - prefix evaluations
+
+    public static int priority(char op) {
+        if (op == '*' || op == '/') {
+            return 2;
+        } else if (op == '+' || op == '-') {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public static int evaluate(int val1, int val2, char op) {
+        if (op == '/') {
+            return val1 / val2;
+        } else if (op == '*') {
+            return val1 * val2;
+        } else if (op == '+') {
+            return val1 + val2;
+        } else if (op == '-') {
+            return val1 - val2;
+        } else {
+            return 0;
+        }
+    }
+
+    // infix
+    public static int infixEvaluation(String exp) {
+        Stack<Character> oStack = new Stack<>();
+        Stack<Integer> vStack = new Stack<>();
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+            if (ch == ' ') {
+                continue;
+            } else if (ch == '(') {
+                oStack.push(ch);
+
+            } else if (ch == '/' || ch == '*' || ch == '+' || ch == '-') {
+                // imp step
+                while (oStack.size() != 0 && oStack.peek() != '(' && priority(oStack.peek()) >= priority(ch)) {
+                    char op = oStack.pop();
+                    int val2 = vStack.pop();
+                    int val1 = vStack.pop();
+                    int res = evaluate(val1, val2, op);
+                    vStack.push(res);
+                }
+                oStack.push(ch); // jo opr aaya h vo to push hoga na process krwa kr ya phir bina process krwaye
+            } else if (ch == ')') {
+                while (oStack.peek() != '(') {
+                    char op = oStack.pop();
+                    int val2 = vStack.pop();
+                    int val1 = vStack.pop();
+                    int res = evaluate(val1, val2, op);
+                    vStack.push(res);
+                }
+                oStack.pop(); // pop the opening bracket
+            } else {
+                // ch is a digit
+                // always push it
+                vStack.push(ch - '0');
+            }
+        }
+        // jaruri to nahi ki ostack empty ho jaye to usko manage krne k liye
+        while (oStack.size() != 0) {
+            char op = oStack.pop();
+            int val2 = vStack.pop();
+            int val1 = vStack.pop();
+            int res = evaluate(val1, val2, op);
+            vStack.push(res);
+        }
+        return vStack.peek();
+    }
+
+    public static String infixToPrefix(String exp) {
+        Stack<Character> oStack = new Stack<>();
+        Stack<String> vStack = new Stack<>();
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+            if (ch == ' ') {
+                continue;
+            } else if (ch == '(') {
+                oStack.push(ch);
+
+            } else if (ch == '/' || ch == '*' || ch == '+' || ch == '-') {
+                // imp step
+                while (oStack.size() != 0 && oStack.peek() != '(' && priority(oStack.peek()) >= priority(ch)) {
+                    char op = oStack.pop();
+                    String val2 = vStack.pop();
+                    String val1 = vStack.pop();
+                    // int res = evaluate(val1, val2, op);
+                    String res = op + val1 + val2;
+                    vStack.push(res);
+                }
+                oStack.push(ch); // jo opr aaya h vo to push hoga na process krwa kr ya phir bina process krwaye
+            } else if (ch == ')') {
+                while (oStack.peek() != '(') {
+                    char op = oStack.pop();
+                    String val2 = vStack.pop();
+                    String val1 = vStack.pop();
+                    // int res = evaluate(val1, val2, op);
+                    String res = op + val1 + val2;
+                    vStack.push(res);
+                }
+                oStack.pop(); // pop the opening bracket
+            } else {
+                // ch is a digit
+                // always push it
+                vStack.push(ch + "");
+            }
+        }
+        // jaruri to nahi ki ostack empty ho jaye to usko manage krne k liye
+        while (oStack.size() != 0) {
+            char op = oStack.pop();
+            String val2 = vStack.pop();
+            String val1 = vStack.pop();
+            // int res = evaluate(val1, val2, op);
+            String res = op + val1 + val2;
+            vStack.push(res);
+        }
+        return vStack.peek();
+    }
+
+    public static String infixToPostfix(String exp) {
+        Stack<Character> oStack = new Stack<>();
+        Stack<String> vStack = new Stack<>();
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+            if (ch == ' ') {
+                continue;
+            } else if (ch == '(') {
+                oStack.push(ch);
+
+            } else if (ch == '/' || ch == '*' || ch == '+' || ch == '-') {
+                // imp step
+                while (oStack.size() != 0 && oStack.peek() != '(' && priority(oStack.peek()) >= priority(ch)) {
+                    char op = oStack.pop();
+                    String val2 = vStack.pop();
+                    String val1 = vStack.pop();
+                    // int res = evaluate(val1, val2, op);
+                    String res = val1 + val2 + op;
+                    vStack.push(res);
+                }
+                oStack.push(ch); // jo opr aaya h vo to push hoga na process krwa kr ya phir bina process krwaye
+            } else if (ch == ')') {
+                while (oStack.peek() != '(') {
+                    char op = oStack.pop();
+                    String val2 = vStack.pop();
+                    String val1 = vStack.pop();
+                    // int res = evaluate(val1, val2, op);
+                    String res = val1 + val2 + op;
+                    vStack.push(res);
+                }
+                oStack.pop(); // pop the opening bracket
+            } else {
+                // ch is a letter
+                // always push it
+                vStack.push(ch + "");
+            }
+        }
+        // jaruri to nahi ki ostack empty ho jaye to usko manage krne k liye
+        while (oStack.size() != 0) {
+            char op = oStack.pop();
+            String val2 = vStack.pop();
+            String val1 = vStack.pop();
+            // int res = evaluate(val1, val2, op);
+            String res = val1 + val2 + op;
+            vStack.push(res);
+        }
+        return vStack.peek();
+
+    }
+
+    // prefix
+    public static int prefixEvaluation(String exp) {
+        Stack<Integer> st = new Stack<>();
+        for (int i = exp.length() - 1; i >= 0; i--) {
+            char ch = exp.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                st.push(ch - '0');
+            } else {
+                int val1 = st.pop();
+                int val2 = st.pop();
+                int res = evaluate(val1, val2, ch);
+                st.push(res);
+            }
+        }
+        return st.peek();
+    }
+
+    public static String prefixToPostfix(String exp) {
+        Stack<String> st = new Stack<>();
+        for (int i = exp.length() - 1; i >= 0; i--) {
+            char ch = exp.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                st.push("" + ch);
+            } else {
+                String val1 = st.pop();
+                String val2 = st.pop();
+                String res = val1 + val2 + ch;
+                st.push(res);
+            }
+        }
+        return st.peek();
+    }
+
+    public static String prefixToInfix(String exp) {
+        Stack<String> st = new Stack<>();
+        for (int i = exp.length() - 1; i >= 0; i--) {
+            char ch = exp.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                st.push("" + ch);
+            } else {
+                String val1 = st.pop();
+                String val2 = st.pop();
+                String res = "(" + val1 + ch + val2 + ")";
+                st.push(res);
+            }
+        }
+        return st.peek();
+    }
+
+    // postfix
+    public static int postfixEvaluation(String exp) {
+        Stack<Integer> st = new Stack<>();
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                st.push(ch - '0');
+            } else {
+                int val2 = st.pop();
+                int val1 = st.pop();
+                int res = evaluate(val1, val2, ch);
+                st.push(res);
+            }
+        }
+        return st.peek();
+    }
+
+    public static String postfixToInfix(String exp) {
+        Stack<String> st = new Stack<>();
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                st.push(ch + "");
+            } else {
+                String val2 = st.pop();
+                String val1 = st.pop();
+                String res = "(" + val1 + ch + val2 + ")";
+                st.push(res);
+            }
+        }
+        return st.peek();
+    }
+
+    public static String postfixToPrefix(String exp) {
+        Stack<String> st = new Stack<>();
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                st.push(ch + "");
+            } else {
+                String val2 = st.pop();
+                String val1 = st.pop();
+                String res = ch + val1 + val2;
+                st.push(res);
+            }
+        }
+        return st.peek();
+    }
+
 }
