@@ -4,7 +4,8 @@ public class ques {
 
     public static void main(String[] args) {
         // que();
-        eval();
+        // eval();
+        fun();
     }
 
     public static void que() {
@@ -87,16 +88,15 @@ public class ques {
         Stack<Integer> st = new Stack<>();
         for (int i = 0; i < n; i++) {
             while (st.size() != 0 && arr[st.peek()] < arr[i]) {
-                ans[st.peek()] = arr[i];
+                ans[st.peek()] = i;
                 st.pop();
             }
             st.push(i);
         }
 
         while (st.size() != 0) {
-            ans[st.pop()] = -1;
+            ans[st.pop()] = arr.length;
         }
-
         return ans;
     }
 
@@ -236,13 +236,6 @@ public class ques {
         }
         return area;
     }
-
-    // leetcode 239 -> sliding window max
-    // public int[] maxSlidingWindow(int[] nums, int k) {
-    // int n = nums.length;
-    // int[] ans = new int[n - k + 1];
-
-    // }
 
     // leetcode 503 -> next greater element 2
     public int[] nextGreaterElements(int[] arr) {
@@ -548,6 +541,142 @@ public class ques {
             }
         }
         return st.peek();
+    }
+
+    // ====================================================================================================================
+
+    // leetcode 239 -> sliding window max
+    public static int[] maxSlidingWindow(int[] arr, int k) {
+        int n = arr.length;
+        int[] ans = new int[n - k + 1];
+        int[] ngor = ngor(arr);
+        int j = 0;
+        for (int i = 0; i <= arr.length - k; i++) {
+            if (j < i) {
+                j = i;
+            }
+            while (i + k > ngor[j]) {
+                j = ngor[j];
+            }
+            ans[i] = arr[j];
+        }
+        return ans;
+    }
+
+    // leetcode 277 - celebrity problem (locked)
+    public static void findCelebrity(int[][] arr) {
+        // if a celebrity is there print it's index (not position), if there is not then
+        // print "none"
+
+        int n = arr.length;
+        Stack<Integer> st = new Stack<>();
+        for (int i = 0; i < n; i++) {
+            st.push(i);
+        }
+
+        while (st.size() > 1) {
+            int i = st.pop();
+            int j = st.pop();
+            if (arr[i][j] == 1) {
+                st.push(j);
+            } else {
+                st.push(i);
+            }
+        }
+
+        int candidate = st.pop();
+
+        for (int c = 0; c < n; c++) {
+            if (arr[candidate][c] == 1) {
+                System.out.println("none");
+                return;
+            }
+        }
+
+        for (int r = 0; r < n; r++) {
+            if (r != candidate && arr[r][candidate] == 0) {
+                System.out.println("none");
+                return;
+            }
+        }
+
+        System.out.println(candidate);
+    }
+
+    public static class Pair implements Comparable<Pair> {
+        int st;
+        int end;
+
+        public Pair(int st, int end) {
+            this.st = st;
+            this.end = end;
+        }
+
+        public int compareTo(Pair other) {
+            return this.st - other.st;
+        }
+    }
+
+    public static void mergeOverlappingIntervals(int[][] arr) {
+        // merge overlapping intervals and print in increasing order of start time
+        Pair[] pairs = new Pair[arr.length];
+        for (int i = 0; i < pairs.length; i++) {
+            int st = arr[i][0];
+            int end = arr[i][1];
+            pairs[i] = new Pair(st, end);
+        }
+
+        Arrays.sort(pairs);
+        Pair res = pairs[0];
+        for (int i = 1; i < pairs.length; i++) {
+            Pair p = pairs[i];
+            if (res.end >= p.st) {
+                if (res.end < p.end) {
+                    res.end = p.end;
+                }
+            } else {
+                System.out.println(res.st + " " + res.end);
+                res = p;
+            }
+        }
+        System.out.println(res.st + " " + res.end);
+    }
+
+    // =============================================================================================================
+    
+    // smallest number following pattern
+    public static void snfp(String str) {
+        Stack<Integer> st = new Stack<>();
+        int count = 1;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == 'd') {
+                st.push(count);
+                count++;
+            } else {
+                st.push(count);
+                count++;
+                // print stack
+                while (st.size() != 0) {
+                    System.out.print(st.pop());
+                }
+            }
+        }
+        // after completion of loop
+        st.push(count);
+        while (st.size() != 0) {
+            System.out.print(st.pop());
+        }
+
+    }
+
+    public static void fun() {
+        // int[] arr = { 1, 3, -1, -3, 5, 3, 6, 7 };
+        // int k = 3;
+        // int[] ans = maxSlidingWindow(arr, k);
+        // System.out.println(Arrays.toString(ans));
+        int[][] arr = { { 5, 12 }, { 1, 8 }, { 14, 19 }, { 22, 28 }, { 25, 27 }, { 27, 30 } };
+        mergeOverlappingIntervals(arr);
     }
 
 }
