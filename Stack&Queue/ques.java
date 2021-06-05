@@ -643,7 +643,7 @@ public class ques {
     }
 
     // =============================================================================================================
-    
+
     // smallest number following pattern
     public static void snfp(String str) {
         Stack<Integer> st = new Stack<>();
@@ -670,6 +670,230 @@ public class ques {
 
     }
 
+    // =====================================================================================================================
+
+    Minimum Stack
+
+    public static class MinStack {
+        Stack<Integer> st;
+        Stack<Integer> minSt;
+
+        public MinStack() {
+            st = new Stack<>();
+            minSt = new Stack<>();
+        }
+
+        int size() {
+            // write your code here
+            return st.size();
+        }
+
+        void push(int val) {
+            // write your code here
+
+            st.push(val);
+            if (minSt.size() == 0) {
+                minSt.push(val);
+            } else {
+                minSt.push(Math.min(minSt.peek(), val));
+            }
+        }
+
+        int pop() {
+            // write your code here
+            if (st.size() == 0) {
+                System.out.println("Stack underflow");
+                return -1;
+            }
+
+            int val = st.peek();
+            st.pop();
+            minSt.pop();
+            return val;
+
+        }
+
+        int top() {
+            // write your code here
+            if (st.size() == 0) {
+                System.out.println("Stack underflow");
+                return -1;
+            }
+            return st.peek();
+        }
+
+        int min() {
+            // write your code here
+            if (st.size() == 0) {
+                System.out.println("Stack underflow");
+                return -1;
+            }
+            return minSt.peek();
+        }
+    }
+
+    // leetcode 155 - minimum stack -> use only one stack to implement
+    public static class MinStackConstantSpace {
+        Stack<Integer> st;
+        int min;
+
+        public MinStackConstantSpace() {
+            st = new Stack<>();
+        }
+
+        int size() {
+            // write your code here
+            return st.size();
+        }
+
+        void push(int val) {
+            // write your code here
+            if (st.size() == 0) {
+                st.push(val);
+                min = val;
+                return;
+            }
+            if (val > min) {
+                st.push(val);
+            } else {
+                st.push(2 * val - min);
+                min = val;
+            }
+        }
+
+        int pop() {
+            // write your code here
+            if (st.size() == 0) {
+                System.out.println("Stack Underflow");
+                return -1;
+            }
+            int data = 0;
+            if (st.peek() > min) {
+                data = st.pop();
+            } else {
+                data = min;
+                min = 2 * min - st.pop(); // geetting the previous min of the stack as current min is popped out of the
+                                          // stack
+            }
+            return data;
+        }
+
+        int top() {
+            // write your code here
+            if (st.size() == 0) {
+                System.out.println("Stack Underflow");
+                return -1;
+            }
+            if (st.peek() > min) {
+                return st.peek();
+            } else {
+                return min;
+            }
+        }
+
+        int min() {
+            // write your code here
+            if (st.size() == 0) {
+                System.out.println("Stack Underflow");
+                return -1;
+            }
+            return min;
+        }
+    }
+
+    // Two stacks in an array
+
+    public static class TwoStack {
+        int[] data;
+        int i;
+        int j;
+
+        public TwoStack(int cap) {
+            // write your code here
+            data = new int[cap];
+            i = 0; // tos 1
+            j = cap - 1; // tos 2
+
+        }
+
+        int size1() {
+            // write your code here
+            return i;
+        }
+
+        int size2() {
+            // write your code here
+            return data.length - j - 1;
+        }
+
+        void push1(int val) {
+            // write your code here
+            if (i <= j) {
+                data[i] = val;
+                i++;
+            } else {
+                System.out.println("Stack overflow");
+            }
+        }
+
+        void push2(int val) {
+            // write your code here
+            if (i <= j) {
+                data[j] = val;
+                j--;
+            } else {
+                System.out.println("Stack overflow");
+            }
+        }
+
+        int pop1() {
+            // write your code here
+            if (i == 0) {
+                System.out.println("Stack underflow");
+                return -1;
+            } else {
+                int val = data[i - 1];
+                i--;
+                return val;
+            }
+        }
+
+        int pop2() {
+            // write your code here
+            if (j == data.length - 1) {
+                System.out.println("Stack underflow");
+                return -1;
+            } else {
+                int val = data[j + 1];
+                j++;
+                return val;
+            }
+        }
+
+        int top1() {
+            // write your code here
+            if (i == 0) {
+                System.out.println("Stack underflow");
+                return -1;
+            } else {
+                int val = data[i - 1];
+                return val;
+            }
+        }
+
+        int top2() {
+            // write your code here
+            if (j == data.length - 1) {
+                System.out.println("Stack underflow");
+                return -1;
+            } else {
+                int val = data[j + 1];
+                return val;
+            }
+        }
+    }
+
+    // -=-=-==-==-=-==-=-=-=-=-=-=-=-=-=--=-==-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     public static void fun() {
         // int[] arr = { 1, 3, -1, -3, 5, 3, 6, 7 };
         // int k = 3;
